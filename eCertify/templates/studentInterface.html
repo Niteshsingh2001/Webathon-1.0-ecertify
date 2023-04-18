@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static %}
+{% block body %}
+<div class="h-screen flex flex-col items-center justify-center px-5 pt-5">
+    <div class="fixed top-0 right-0 my-4 mx-4">
+        <a href="admin" class="btn text-sm "> Admin Login</a>
+    </div>
+
+    <div id="auth" class=" glass p-5 flex-col bg-gray-300">
+        <h1 class="mb-4 text-white text-center font-medium">Log In</h1>
+        <form action="" method="post" id="usercheck" class="flex  flex-col">
+            {% csrf_token %}
+            <input class="input mb-4 p-1 px-3" type="text" required name="username" id="username"
+                placeholder="Username">
+            <input class="input mb-2 p-1 px-3" type="date" required name="dob" id="dob" placeholder="Date of Birth">
+            <button class="btn mb-4" type="submit">Enter</button>
+            <p id="msg" class="text-center text-white"> </p>
+        </form>
+    </div>
+
+    <div id="main"
+        class="mt-28 overflow-hidden hidden  h-full w-full lg:px-4 lg:pt-4 sm:px-2 sm:pt-2 pt-2 px-2 border-l-2 border-r-2 border-t-2  border-b-white items-center rounded-t-lg ">
+        <div class="h-full bg-white bg-opacity-20 backdrop-blur-md w-full rounded-t-lg flex flex-col">
+            <div class="flex items-center justify-center my-10">
+                <div class="text-white f m-3  text-2xl"><span class="text-pink-500">:-)</span> Hello <span
+                        class="text-pink-500 font-semibold capitalize" id="name">Rahul</span>
+                </div>
+            </div>
+
+            <div id="allCertificates" class="overflow-y-auto hideScroll ">
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+</div>
+
+<!-- Certificate -->
+<div id="certificate_temp1" class="hidden bgCert  justify-center items-center align-middle h-screen w-screen">
+    <div class=" rounded-lg shadow-lg p-2  w-full h-full">
+        <div class=" p-8 rounded-lg border border-black flex flex-col items-center justify-evenly w-full h-full">
+            <h1 class=" font-bold mb-4 capitalize lg:text-6xl md:text-3xl text-lg">Certificate of Completion</h1>
+            <p class="mb-4 lg:text-2xl md:text-xl text-lg">This certificate is awarded to:</p>
+            <h2 id="cert_name" class="lg:text-4xl md:text-2xl text-lg font-bold mb-4 capitalize">John Doe</h2>
+            <p id="cert_msg" class="mb-4  lg:text-2xl md:text-xl text-lg">For completing the course on:</p>
+            <h3 id="cert_purpose" class="lg:text-4xl md:text-2xl text-lg capitalize">Web Development</h3>
+            <p class="mb-4">Issued on: <span class="font-bold" id="cert_date">July 1, 2023</span></p>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}
+
+{% block script %}
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script>
+
+    let auth = document.getElementById("auth");
+    let msg = document.getElementById("msg");
+    let main = document.getElementById("main");
+    let name = document.getElementById("name");
+    let allCertificates = document.getElementById("allCertificates");
+    let downloadBtn;
+
+    let cert_name = document.getElementById("cert_name");
+    let cert_msg = document.getElementById("cert_msg");
+    let cert_purpose = document.getElementById("cert_purpose");
+    let cert_date = document.getElementById("cert_date");
+
+    const form = document.getElementById('usercheck');
+
+
+
+    function downloadCertificate(filename) {
+        // Get the section element to be downloaded
+        const section = document.getElementById("certificate_temp1");
+        section.style.display = "flex";
+        // Use html2canvas to create a canvas element from the section
+        html2canvas(section).then(canvas => {
+            // Convert the canvas to a data URL
+            const imageData = canvas.toDataURL("image/png");
+
+            // Create a download link and trigger the download
+            const link = document.createElement("a");
+            link.download = filename + ".png";
+            link.href = imageData;
+            link.click();
+        });
+        section.style.display = "none";
+    }
+
+
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const response = await fetch(`/`, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data)
+            auth.style.display = "none";
+            main.style.display = "flex";
+            name.innerText = data.name;
+            let certs = data.certifcate
+            console.log(certs)
+            console.log(certs.length)
+            let list = "";
+            if (certs.length != undefined) {
+                for (let key in certs) {
+                    list += `
+                <div class=" text-white text-center flex items-center flex-col">
+                    <div class="bg-white mx-3 mt-2 flex flex-row px-5 py-4 text-sm justify-between rounded-lg w-1/2">
+                        <h1 class="text-pink-500">${certs[key].purpose} Certificate</h1>
+                        <button  data-purpose="${certs[key].purpose}" data-msg="${certs[key].msg}" data-date="${certs[key].date}"
+                            class="ml-4"><i class="downloadbtn bi bi-arrow-down text-pink-500"></i></button>
+                    </div>
+                </div>
+                `
+                    allCertificates.innerHTML = list;
+                }
+            }
+            else {
+                allCertificates.innerHTML = '<p class="text-center text-white" text-lg>No Certificates :-( </p>';
+
+            }
+
+
+            downloadBtn = document.querySelectorAll(".downloadbtn");
+
+            downloadBtn.forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    console.log(e.target.parentElement)
+                    let purpose = e.target.parentElement.getAttribute('data-purpose');
+                    let msg = e.target.parentElement.getAttribute('data-msg');
+                    let date = e.target.parentElement.getAttribute('data-date');
+                    console.log(purpose, msg, date,)
+                    cert_name.innerText = data.name;
+                    cert_msg.innerText = msg;
+                    cert_purpose.innerText = purpose;
+                    cert_date.innerText = date;
+
+
+                    downloadCertificate(data.name + "'s " + purpose + " Certificate")
+
+
+                });
+            })
+        }
+        else {
+            msg.innerText = 'User Not Found'
+            setInterval(() => { msg.innerText = "" }, 2000)
+        }
+    });
+
+
+
+</script>
+
+{% endblock script %}

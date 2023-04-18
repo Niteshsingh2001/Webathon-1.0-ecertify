@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+{% block body %}
+<div class="h-screen flex flex-col  items-center justify-center">
+    <div class="flex flex-row items-center justify-center align-middle rounded-lg w-1/2  m-0 p-0">
+
+        <!-- Login Form -->
+        <div class="w-96 h-96 flex glass flex-col justify-center items-center">
+            <form action="" method="post">
+                {% csrf_token %}
+                <!-- Input Fields -->
+                <div class="flex mt-5 justify-center items-center align-middle  ">
+                    <label for="username" class="mr-4"><i class="bi bi-person text-3xl text-pink-500 "></i></label>
+                    <input class="input" type="text" name="username" required id="username" placeholder="Username">
+                </div>
+                <div class="flex mt-5  justify-center items-center align-middle ">
+                    <label for="mail" class="mr-4"><i class="bi bi-key text-3xl text-pink-500 "></i></label>
+                    <input class="input" type="password" name="pass" required id="pass" placeholder="Password">
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex mt-5  flex-col justify-center items-center align-middle ">
+                    <Button class="btn" type="submit">Sign In</Button>
+                    <a href="" class="text-sm font-thin text-white mt-3">Not a user Sign Up </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Display Image -->
+        <div class="bg-white h-full w-96 bgAnim rounded-r-lg">
+        </div>
+
+    </div>
+</div>
+{% endblock body %}

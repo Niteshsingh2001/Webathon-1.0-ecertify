@@ -1,0 +1,527 @@
+{% extends "base.html" %}
+{% load static %}
+{% block body %}
+
+<div id="popup"
+    class="hidden animate-bounce fixed top-8 right-0 w-1/5 mx-8 border border-pink-500 z-50  justify-center items-center align-middle bg-white p-2 rounded-lg shadow-lg">
+    <p id="msg" class="text-lg text-pink-500 font-md  "></p>
+</div>
+
+<div class="h-screen flex flex-row  items-center justify-center p-4">
+
+    <!-- Sidebar -->
+    <div class="w-1/4 h-full flex flex-col glass2 justify-between items-center mr-2">
+
+        <div class="top w-full px-2">
+            <!-- Logo -->
+            <div
+                class="logo text-lg font-bold h-10 text-pink-500 first-letter:text-white  text-center  flex items-center justify-center align-middle">
+                <h1> Dashboard</h1>
+            </div>
+            <!-- Options -->
+            <div class="mt-2">
+                <div id="student"
+                    class=" mb-3  px-5 h-10 flex justify-start rounded-md items-center hover:bg-pink-500 hover:text-white  shadow-sm  bg-white bg-opacity-30 text-pink-500 ">
+                    <i class="bi bi-person-square mr-3"></i>
+                    Student
+                </div>
+
+            </div>
+        </div>
+
+        <div class="w-full mb-2 px-2">
+            <!-- logout -->
+            <div class="  px-5 h-10 flex justify-start rounded-md items-center text-white hover:bg-pink-500 ">
+                <i class="bi bi-box-arrow-right  mr-3"></i>
+                <a href="logout">Logout</a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- RHS Content -->
+    <div class="bg-white h-full rounded-lg w-full  ">
+
+        <!-- Idle Screen -->
+        <div id="idle" class="toggle-content flex flex-col items-center justify-center ">
+            <img src="{% static 'images/help.gif' %}" alt="" class="bg-black h-1/2">
+            <span class="text-pink-500">Welcome,<span class="text-black"> How can I Help you</span></span>
+        </div>
+
+        <!--  Section     -->
+        <div id="studentdata" class="flex-col hidden">
+            <div class=" mt-4 mx-2">
+                <div class="flex flex-row-reverse">
+                    <button id="add" class="px-4 py-2 text-white bg-pink-500 rounded hover:bg-pink-600">
+                        <i class="bi bi-plus-lg mr-2"></i>Add Student
+                    </button>
+                </div>
+            </div>
+
+
+            <!-- All Students  -->
+
+            <div class=" mt-4 mx-2  ">
+                <table class="w-full  ">
+                    <thead class="bg-gray-300 h-8">
+                        <tr>
+                            <th class="">#</th>
+                            <th class="">Username</th>
+                            <th class="">Name</th>
+                            <th class="">Email</th>
+                            <th class="">DOB</th>
+                            <th class=""> </th>
+                        </tr>
+                    </thead>
+                    <tbody id="students_data_table">
+
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Add Sction -->
+
+        <div id="addsection" class="hidden h-full flex-col  justify-center align-middle">
+            <h1 class=" text-center w-full text-3xl font-bold mb-4 text-pink-500">Add Student</h1>
+            <form action="" id="addsectionform" method="post"
+                class="flex flex-col w-full  items-center justify-center align-middle">
+                {% csrf_token %}
+                <!-- Input Fields -->
+                <div class="flex mt-5 w-1/2 justify-center">
+                    <label for="username" class="mr-4 w-20">Username</label>
+                    <input class="input2" type="text" name="username" disabled id="username"
+                        placeholder="Auto Genrated">
+                </div>
+                <div class="flex mt-5 w-1/2 justify-center">
+                    <label for="name" class="mr-4 w-20">Name</label>
+                    <input class="input2" type="text" name="name" id="name" placeholder="Name ">
+                </div>
+                <div class="flex mt-5 w-1/2 justify-center">
+                    <label for="mail" class="mr-4 w-20">Email</label>
+                    <input class="input2" type="text" name="mail" id="mail" placeholder="Email Address">
+                </div>
+                <div class="flex mt-5  w-1/2 justify-center  ">
+                    <label for="date" class="mr-4 w-20">DOB</label>
+                    <input class="input2" type="date" name="date" id="date" placeholder="DOB">
+                </div>
+                <div class="flex mt-5 w-96 justify-end items-center  ">
+                    <Button class="btn" type="submit"><i class="bi bi-plus-lg mr-2"></i>Add</Button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Edit Sction -->
+
+        <div id="edit_section" class="hidden h-full flex-col  justify-center align-middle">
+            <h1 class=" text-center w-full text-3xl font-bold mb-4 text-pink-500">Edit Student</h1>
+            <form action="" id="editsectionform" method="post"
+                class="flex flex-col w-full  items-center justify-center align-middle">
+                {% csrf_token %}
+                <!-- Input Fields -->
+                <div class="flex mt-5 w-1/2 justify-center">
+                    <label for="edit_username" class="mr-4 w-20">Username</label>
+                    <input class="input2" type="text" name="edit_username" id="edit_username">
+                </div>
+                <div class="flex mt-5 w-1/2 justify-center">
+                    <label for="edit_name" class="mr-4 w-20">Name</label>
+                    <input class="input2" type="text" name="edit_name" id="edit_name">
+                </div>
+                <div class="flex mt-5 w-1/2 justify-center">
+                    <label for="edit_mail" class="mr-4 w-20">Email</label>
+                    <input class="input2" type="text" name="edit_mail" id="edit_mail">
+                </div>
+                <div class="flex mt-5  w-1/2 justify-center  ">
+                    <label for="edit_date" class="mr-4 w-20">DOB</label>
+                    <input class="input2" type="date" min="date" name="edit_date" id="edit_date">
+                </div>
+                <div class="flex mt-5 w-96 justify-end items-center  ">
+                    <Button class="btn" type="submit"><i class="bi bi-plus-lg mr-2"></i>Save</Button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Generate Sction -->
+
+        <div id="gen_section" class=" h-full flex-col hidden justify-center align-middle">
+            <h1 class=" text-center w-full text-3xl font-bold mb-4 text-pink-500">Generate Certificate</h1>
+            <form action="" id="gensectionform" method="post"
+                class="flex flex-col w-full  items-center justify-center align-middle">
+                {% csrf_token %}
+                <!-- Input Fields -->
+                <div class="flex mt-5 w-1/2 justify-center">
+                    <label for="gen_msg" class="mr-4 w-20">Message</label>
+                    <input class="input2" type="text" name="gen_msg" id="gen_msg"
+                        placeholder="For completing the course on:">
+                </div>
+                <div class="flex mt-5 w-1/2 justify-center">
+                    <label for="gen_purpose" class="mr-4 w-20">Purpose</label>
+                    <input class="input2" type="text" name="gen_purpose" id="gen_purpose" placeholder="Web Development">
+                </div>
+                <div class="flex mt-5 w-96 justify-end items-center  ">
+                    <Button class="btn" type="submit"><i class="bi bi-plus-lg mr-2"></i>Save</Button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+
+</div>
+
+</div>
+
+{% endblock body %}
+{% block script %}
+
+<script>
+
+    // Pop Up
+    const popup = document.getElementById("popup");
+    const msg = document.getElementById("msg");
+
+    // Idle Screen
+    const idle = document.getElementById("idle");
+
+    // LHS Sidebar's Btn
+    const studentbtn = document.getElementById("student");
+
+    // RHS
+    const studentdata = document.getElementById("studentdata");
+    let students_data_table = document.getElementById('students_data_table');
+    let addbtn = document.getElementById('add'); // add student btn
+    let action_del;
+    let action_edit;
+    let action_generate;
+
+    // Add Students tab
+    let addsection = document.getElementById('addsection');
+    let randomNumber = Math.floor(Math.random() * 9000) + 1000;
+
+    //Edit Students tab
+    let edit_section = document.getElementById('edit_section');
+    let edit_username = document.getElementById('edit_username');
+    let edit_name = document.getElementById('edit_name');
+    let edit_mail = document.getElementById('edit_mail');
+    let edit_date = document.getElementById('edit_date');
+    let edit_id;
+
+    //Generate Certifcate tab
+    let gen_section = document.getElementById('gen_section');
+    let gen_id;
+
+    //Form Data
+    let name = document.getElementById('name');
+    let username = document.getElementById('username');
+
+
+    // Sidebar
+    async function getData(url) {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data;
+    }
+
+    function fetch_student_data() {
+        let all_data = "";
+        getData('student_data')
+            .then(data => {
+                for (let key in data) {
+                    all_data += `<tr class="bg-slate-50 text-center h-10 ">
+                <th>${parseInt(key) + 1}</th>
+                <td>${data[key].username}</td>
+                <td>${data[key].name}</td>
+                <td>${data[key].mail}</td>
+                <td>${data[key].dob}</td>
+                <td class="flex justify-evenly text-pink-500 h-10">
+                    <button class='action_edit'data-id=${data[key].id} title="Edit"><i class="bi bi-pencil"></i> </button>
+                    <button class='action_gen' data-id=${data[key].id} title="Generate Certifcate"><i class="bi bi-file-post"></i></button>
+                    <button class='action_del' data-id=${data[key].id} title="Delete"><i class="bi bi-trash"></i></button>
+                </td>
+
+            </tr>`
+                    console.log(data)
+                }
+                students_data_table.innerHTML = all_data;
+
+                action_edit = document.querySelectorAll('.action_edit');
+                action_del = document.querySelectorAll('.action_del');
+                action_gen = document.querySelectorAll('.action_gen');
+
+
+                // Delete Button 
+                action_del.forEach((btn) => {
+                    btn.addEventListener('click', (e) => {
+                        id = e.target.parentElement.getAttribute('data-id');
+                        getData(`del_student_data/${id}`)
+                            .then(data => {
+                                console.log("Deleted")
+                                console.log(data)
+
+                                popup.style.display = "flex";
+                                msg.innerText = "Deleted"
+                                setTimeout(() => {
+                                    popup.style.display = "none";
+                                }, 2000);
+                                fetch_student_data()
+                            })
+                            .catch(error => {
+                                popup.style.display = "flex";
+                                msg.innerText = error
+                                setTimeout(() => {
+                                    popup.style.display = "none";
+                                }, 2000);
+                            });
+                    });
+                })
+
+                // Generate Button 
+                action_gen.forEach((btn) => {
+                    btn.addEventListener('click', (e) => {
+                        gen_id = e.target.parentElement.getAttribute('data-id');
+
+                        if (studentdata.style.display === "flex") {
+                            gen_section.style.display = "flex";
+                            edit_section.style.display = "none";
+                            studentdata.style.display = "none";
+
+                        } else {
+                            console.log("error")
+                            edit_section.style.display = "none";
+                            studentdata.style.display = "flex";
+                            idle.style.display = "none";
+                            gen_section.style.display = "none";
+                            addsection.style.display = "none";
+                        }
+                    });
+                })
+
+                // Edit Button
+                action_edit.forEach((btn) => {
+                    btn.addEventListener('click', (e) => {
+                        edit_id = e.target.parentElement.getAttribute('data-id');
+                        getData(`edit_student_data/${edit_id}`)
+                            .then(data => {
+                                //let d = JSON.parse(data)
+                                console.log(data)
+
+                                console.log(data.username)
+                                console.log(data["name"])
+                                edit_username.value = data.username;
+                                edit_name.value = data.name;
+                                edit_mail.value = data.email;
+                                edit_date.value = data.dob;
+
+                                if (studentdata.style.display === "flex") {
+                                    console.log("success")
+                                    edit_section.style.display = "flex";
+                                    studentdata.style.display = "none";
+
+                                } else {
+                                    console.log("error")
+                                    studentdata.style.display = "flex";
+                                    idle.style.display = "none";
+                                    edit_section.style.display = "none";
+                                    addsection.style.display = "none";
+                                }
+                            })
+                            .catch(error => {
+
+                                popup.style.display = "flex";
+                                msg.innerText = error
+                                setTimeout(() => {
+                                    popup.style.display = "none";
+                                }, 2000);
+                            });
+                    });
+                })
+
+            })
+
+            .catch(error => console.error(error));
+    }
+
+    studentbtn.addEventListener("click", function () {
+        if (studentdata.style.display === "none" || studentdata.style.display === "") {
+            fetch_student_data()
+            studentdata.style.display = "flex";
+            idle.style.display = "none";
+            addsection.style.display = "none";
+            edit_section.style.display = "none"
+            gen_section.style.display = "none"
+        } else {
+            idle.style.display = "flex";
+            studentdata.style.display = "none";
+            addsection.style.display = "none";
+            edit_section.style.display = "none"
+            gen_section.style.display = "none"
+        }
+    });
+
+    // Add Student
+    addbtn.addEventListener("click", () => {
+        if (addsection.style.display === "none" || addsection.style.display === "") {
+            addsection.style.display = "flex";
+            studentdata.style.display = "none";
+            fetch_student_data();
+        } else {
+            addsection.style.display = "none";
+            studentdata.style.display = "flex";
+        }
+    });
+
+    // Genrating Username
+    name.addEventListener('keypress', (e) => {
+        username.value = name.value + randomNumber
+    })
+
+    edit_name.addEventListener('keypress', (e) => {
+        edit_username.value = edit_name
+            .value + randomNumber
+    })
+    //Add section form
+    const form = document.getElementById('addsectionform');
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        username.disabled = false;
+        const formData = new FormData(form);
+        const response = await fetch('/add_student_data', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+
+            if (addsection.style.display === "flex") {
+                studentdata.style.display = 'flex';
+                addsection.style.display = 'none';
+            } else {
+                studentdata.style.display = 'none';
+                addsection.style.display = 'flex';
+            }
+            form.reset();
+            username.disabled = true;
+            popup.style.display = "flex";
+            msg.innerText = "Added Student"
+            fetch_student_data()
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 2000);
+        } else {
+            popup.style.display = "flex";
+            msg.innerText = response.statusText
+            username.disabled = true;
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 2000);
+
+        }
+    });
+
+    // Generate Cretifcate
+
+    const form3 = document.getElementById('gensectionform');
+
+    form3.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        username.disabled = false;
+        const formData2 = new FormData(form3);
+        const response = await fetch(`/gen_certificate/${gen_id}`, {
+            method: 'POST',
+            body: formData2
+        });
+        console.log(formData2)
+        if (response.ok) {
+            const data = await response.json();
+
+            if (gen_section.style.display === "flex") {
+                studentdata.style.display = 'flex';
+                addsection.style.display = 'none';
+                edit_section.style.display = 'none';
+                gen_section.style.display = 'none';
+
+            } else {
+                studentdata.style.display = 'none';
+                addsection.style.display = 'none';
+                gen_section.style.display = 'flex';
+                edit_section.style.display = 'none';
+            }
+            form.reset();
+            username.disabled = true;
+            popup.style.display = "flex";
+            msg.innerText = "Generated"
+            fetch_student_data()
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 2000);
+        } else {
+            popup.style.display = "flex";
+            msg.innerText = response.statusText;
+            username.disabled = true;
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 2000);
+
+        }
+    });
+
+    // Edit Student
+    const form2 = document.getElementById('editsectionform');
+
+    form2.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        username.disabled = false;
+        const formData2 = new FormData(form2);
+        const response = await fetch(`/edit_student_data/${edit_id}`, {
+            method: 'POST',
+            body: formData2
+        });
+        console.log(formData2)
+        if (response.ok) {
+            const data = await response.json();
+    
+            edit_username.value = data['username']
+            edit_name.value = data['name']
+            edit_mail.value = data['email']
+            edit_date.value = data['dob']
+
+            if (edit_section.style.display === "flex") {
+                studentdata.style.display = 'flex';
+                addsection.style.display = 'none';
+                edit_section.style.display = 'none';
+                gen_section.style.display = 'none';
+
+            } else {
+                studentdata.style.display = 'none';
+                addsection.style.display = 'none';
+                gen_section.style.display = 'none';
+                edit_section.style.display = 'flex';
+            }
+            form.reset();
+            username.disabled = true;
+            popup.style.display = "flex";
+            msg.innerText = 'Edited Data'
+            fetch_student_data()
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 2000);
+        } else {
+            popup.style.display = "flex";
+            msg.innerText = response.statusText;
+            username.disabled = true;
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 2000);
+
+        }
+    });
+
+
+
+</script>
+
+{% endblock script %}
